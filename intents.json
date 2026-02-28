@@ -1,0 +1,19 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hello", "Hi", "Hey", "Good morning"],
+      "responses": ["Hello! How can I help you?", "Hi there!"]
+    },
+    {
+      "tag": "fees",
+      "patterns": ["What is the fee structure?", "Tell me about fees"],
+      "responses": ["You can check the fee structure on the official college website."]
+    },
+    {
+      "tag": "admission",
+      "patterns": ["How to apply?", "Admission process"],
+      "responses": ["You can apply through the online admission portal."]
+    }
+  ]
+}
