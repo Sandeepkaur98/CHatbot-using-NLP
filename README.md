@@ -35,3 +35,38 @@ if user_input:
     prediction = model.predict(vector)[0]
     response = get_response(prediction)
     st.write("Bot:", response)
+
+    import json
+import nltk
+import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from nltk.stem import WordNetLemmatizer
+
+lemmatizer = WordNetLemmatizer()
+
+with open("intents.json") as file:
+    data = json.load(file)
+
+texts = []
+labels = []
+
+for intent in data["intents"]:
+    for pattern in intent["patterns"]:
+        tokens = nltk.word_tokenize(pattern.lower())
+        tokens = [lemmatizer.lemmatize(word) for word in tokens]
+        texts.append(" ".join(tokens))
+        labels.append(intent["tag"])
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(texts)
+
+model = MultinomialNB()
+model.fit(X, labels)
+
+pickle.dump(model, open("model.pkl", "wb"))
+pickle.dump(vectorizer, open("vectorizer.pkl", "wb"))
+
+print("Model Trained Successfully!")
+
+
