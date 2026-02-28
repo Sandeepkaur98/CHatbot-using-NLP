@@ -73,13 +73,23 @@ print("Model Trained Successfully!")
   "intents": [
     {
       "tag": "greeting",
-      "patterns": ["Hello", "Hi", "Good morning"],
+      "patterns": ["Hi", "Hello", "Hey", "Good morning"],
       "responses": ["Hello! How can I help you?", "Hi there!"]
     },
     {
-      "tag": "fees",
-      "patterns": ["What is the fee structure?", "Tell me about fees"],
-      "responses": ["You can check fees on the college website."]
+      "tag": "about",
+      "patterns": ["Who are you?", "What is your name?"],
+      "responses": ["I am a simple NLP chatbot created using Python and Streamlit."]
+    },
+    {
+      "tag": "python",
+      "patterns": ["What is Python?", "Tell me about Python"],
+      "responses": ["Python is a high-level programming language used for web, AI, and data science."]
+    },
+    {
+      "tag": "bye",
+      "patterns": ["Bye", "Goodbye"],
+      "responses": ["Goodbye! Have a great day!"]
     }
   ]
 }
