@@ -3,17 +3,26 @@ import pickle
 import nltk
 import json
 import random
-
 from nltk.stem import WordNetLemmatizer
+
+# Download required data
+nltk.download('punkt')
+nltk.download('wordnet')
+
 lemmatizer = WordNetLemmatizer()
 
-# Load model and vectorizer
-model = pickle.load(open("model.pkl", "rb"))
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+st.title("🎓 College ML Chatbot")
 
-# Load intents
-with open("intents.json") as file:
-    intents = json.load(file)
+try:
+    model = pickle.load(open("model.pkl", "rb"))
+    vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+
+    with open("intents.json") as file:
+        intents = json.load(file)
+
+except Exception as e:
+    st.error(f"Error loading files: {e}")
+    st.stop()
 
 def clean_text(text):
     tokens = nltk.word_tokenize(text.lower())
@@ -24,8 +33,7 @@ def get_response(tag):
     for intent in intents["intents"]:
         if intent["tag"] == tag:
             return random.choice(intent["responses"])
-
-st.title("🎓 College ML Chatbot")
+    return "Sorry, I didn't understand that."
 
 user_input = st.text_input("Ask your query:")
 
