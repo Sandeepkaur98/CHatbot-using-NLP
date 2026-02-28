@@ -69,4 +69,19 @@ pickle.dump(vectorizer, open("vectorizer.pkl", "wb"))
 
 print("Model Trained Successfully!")
 
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hello", "Hi", "Good morning"],
+      "responses": ["Hello! How can I help you?", "Hi there!"]
+    },
+    {
+      "tag": "fees",
+      "patterns": ["What is the fee structure?", "Tell me about fees"],
+      "responses": ["You can check fees on the college website."]
+    }
+  ]
+}
+
 
