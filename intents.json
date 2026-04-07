@@ -2,17 +2,25 @@
   "intents": [
     {
       "tag": "greeting",
-      "patterns": ["Hello", "Hi", "Hey", "Good morning"],
+      "patterns": ["Hello", "Hi", "Hey", "Good morning", "Good evening"],
       "responses": ["Hello! How can I help you?", "Hi there!"]
     },
     {
       "tag": "fees",
-      "patterns": ["What is the fee structure?", "Tell me about fees"],
+      "patterns": [
+        "What is the fee structure?",
+        "Tell me about fees",
+        "How much is the college fee?"
+      ],
       "responses": ["You can check the fee structure on the official college website."]
     },
     {
       "tag": "admission",
-      "patterns": ["How to apply?", "Admission process"],
+      "patterns": [
+        "How to apply?",
+        "Admission process",
+        "Procedure for admission"
+      ],
       "responses": ["You can apply through the online admission portal."]
     }
   ]
