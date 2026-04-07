@@ -1,45 +1,65 @@
 import streamlit as st
-import pickle
-import nltk
 import json
 import random
-from nltk.stem import WordNetLemmatizer
+import wikipedia
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from transformers import pipeline
 
-# Download required data
-nltk.download('punkt')
-nltk.download('wordnet')
+with open('intents.json') as file:
+    data = json.load(file)
 
-lemmatizer = WordNetLemmatizer()
+patterns = []
+tags = []
 
-st.title("🎓 College ML Chatbot")
+for intent in data['intents']:
+    for pattern in intent['patterns']:
+        patterns.append(pattern)
+        tags.append(intent['tag'])
 
-try:
-    model = pickle.load(open("model.pkl", "rb"))
-    vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(patterns)
 
-    with open("intents.json") as file:
-        intents = json.load(file)
+generator = pipeline("text-generation", model="distilgpt2")
 
-except Exception as e:
-    st.error(f"Error loading files: {e}")
-    st.stop()
+def chatbot_response(user_input):
+    # Step 1: Intent Matching
+    user_vec = vectorizer.transform([user_input])
+    similarity = cosine_similarity(user_vec, X)
 
-def clean_text(text):
-    tokens = nltk.word_tokenize(text.lower())
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    return " ".join(tokens)
+    index = similarity.argmax()
+    score = similarity[0][index]
 
-def get_response(tag):
-    for intent in intents["intents"]:
-        if intent["tag"] == tag:
-            return random.choice(intent["responses"])
-    return "Sorry, I didn't understand that."
+    if score > 0.3:
+        tag = tags[index]
+        for intent in data['intents']:
+            if intent['tag'] == tag:
+                return random.choice(intent['responses'])
+    try:
+        return wikipedia.summary(user_input, sentences=2)
+    except:
+        pass
 
-user_input = st.text_input("Ask your query:")
+    try:
+        response = generator(user_input, max_length=60, num_return_sequences=1)
+        return response[0]['generated_text']
+    except:
+        return "Sorry, I couldn't understand that."
+st.set_page_config(page_title="AI Chatbot", layout="centered")
 
-if user_input:
-    cleaned = clean_text(user_input)
-    vector = vectorizer.transform([cleaned])
-    prediction = model.predict(vector)[0]
-    response = get_response(prediction)
-    st.write("Bot:", response)
+st.title("Hybrid AI Chatbot")
+st.write("Ask anything: College info, general knowledge, or more!")
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+user_input = st.text_input("You:")
+
+if st.button("Send"):
+    if user_input:
+        response = chatbot_response(user_input)
+        st.session_state.chat_history.append(("You", user_input))
+        st.session_state.chat_history.append(("Bot", response))
+
+for sender, message in st.session_state.chat_history:
+    st.write(f"**{sender}:** {message}")
